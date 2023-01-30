@@ -27,7 +27,7 @@ def chat(inp, chain, index):
     return answer
 
 
-block = gr.Blocks(css=".gradio-container {background-color: lightgray}")
+block = gr.Blocks()
 
 with block:
     with gr.Row():
