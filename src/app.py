@@ -15,19 +15,16 @@ def set_openai_api_key(api_key):
         return chain, search_index
 
 
-def chat(inp, history, chain, index):
+def chat(inp, chain, index):
     """Chat with the bot."""
-    
-    history = history or []
+
     if chain is None:
-        history.append((inp, "Please paste your OpenAI key to use"))
-        return history, history
+        return "Please paste your OpenAI key to use"
     print("\n==== date/time: " + str(datetime.datetime.now()) + " ====")
     print("inp: " + inp)
     answer = get_answer(inp, chain, index)
-    history.append((inp, answer))
-    print(history)
-    return history, history
+    print(answer)
+    return answer
 
 
 block = gr.Blocks(css=".gradio-container {background-color: lightgray}")
@@ -43,8 +40,6 @@ with block:
             type="password",
         )
 
-    chatbot = gr.Chatbot()
-
     with gr.Row():
         message = gr.Textbox(
             label="What's your question?",
@@ -53,6 +48,8 @@ with block:
         )
         submit = gr.Button(value="Submit", variant="secondary").style(
             full_width=False)
+
+    output = gr.Markdown()
 
     gr.Examples(
         examples=[
@@ -68,14 +65,13 @@ with block:
     Semantic search for the devcontainer documentation at https://containers.dev"""
     )
 
-    history_state = gr.State()
     chain_state = gr.State()
     index_state = gr.State()
 
-    submit.click(chat, inputs=[message, history_state,
-                 chain_state, index_state], outputs=[chatbot, history_state])
-    message.submit(chat, inputs=[message, history_state,
-                   chain_state, index_state], outputs=[chatbot, history_state])
+    submit.click(chat, inputs=[message,
+                 chain_state, index_state], outputs=[output])
+    message.submit(chat, inputs=[message,
+                   chain_state, index_state], outputs=[output])
 
     openai_api_key_textbox.change(
         set_openai_api_key,
