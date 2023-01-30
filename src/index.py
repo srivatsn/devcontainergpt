@@ -5,6 +5,7 @@ import pathlib
 import pickle
 import subprocess
 import tempfile
+import urllib.request
 from time import sleep
 from langchain.docstore.document import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -84,5 +85,12 @@ def get_search_index():
         with open("search_index.pickle", "rb") as f:
             index = pickle.load(f)
     else:
-        index = create_search_index()
+        try:
+            index = pickle.load(urllib.request.urlopen(
+                "https://github.com/srivatsn/devcontainergpt/releases/download/index-0.1/search_index.pickle"))
+        except Exception:
+            return None
     return index
+
+if __name__ == "__main__":
+    create_search_index()

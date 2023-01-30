@@ -20,6 +20,8 @@ def chat(inp, chain, index):
 
     if chain is None:
         return "Please paste your OpenAI key to use"
+    if index is None:
+        return "This repo doesn't have a search index yet. Please try again later."
     print("\n==== date/time: " + str(datetime.datetime.now()) + " ====")
     print("inp: " + inp)
     answer = get_answer(inp, chain, index)
