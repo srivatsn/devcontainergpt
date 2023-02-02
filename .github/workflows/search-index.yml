@@ -30,4 +30,3 @@ jobs:
     - name: Create search index
       run: |
         python src/index.py
-    - 
