@@ -30,3 +30,11 @@ jobs:
     - name: Create search index
       run: |
         python src/index.py
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    - name: Release
+      uses: fnkr/github-action-ghr@v1
+      env:
+        GHR_REPLACE: true
+        GHR_PATH: search-index.pickle
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
