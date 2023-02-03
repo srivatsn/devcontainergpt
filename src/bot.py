@@ -15,7 +15,7 @@ def get_chain():
     )
 
     template = """You are an AI assistant for the Codespaces team's live site operations.
-    You are given the following extracted parts of a long document and a question. Each of the document is a trouble shooting guide (abbrebiated as TSG).
+    You are given the following extracted parts of a long document and a question. Each of the documents is a trouble shooting guide (abbreviated as TSG).
     Provide a conversational answer with a hyperlink to the documentation.
     You should only use hyperlinks that are explicitly listed as a source in the context. Do NOT make up a hyperlink that is not listed.
     Always return a hyperlink to the TSG.
