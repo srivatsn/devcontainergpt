@@ -13,7 +13,7 @@ from langchain.vectorstores.faiss import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 
 
-def get_github_docs(repo_owner, repo_name):
+def get_github_docs(repo_owner, repo_name, pathPrefix=None):
     """Get all markdown files from a github repo."""
 
     with tempfile.TemporaryDirectory() as d:
@@ -28,11 +28,12 @@ def get_github_docs(repo_owner, repo_name):
             .strip()
         )
         repo_path = pathlib.Path(d)
-        markdown_files = list(repo_path.glob("*/*.md")) + list(
-            repo_path.glob("*/*.mdx")
+        markdown_files = list(repo_path.glob(pathPrefix + "**/*.md")) + list(
+            repo_path.glob(pathPrefix + "**/*.mdx")
         )
         for markdown_file in markdown_files:
             with open(markdown_file, "r") as f:
+                print(markdown_file)
                 relative_path = markdown_file.relative_to(repo_path)
                 github_url = f"https://github.com/{repo_owner}/{repo_name}/blob/{git_sha}/{relative_path}"
                 yield Document(page_content=f.read(), metadata={"source": github_url})
@@ -54,7 +55,7 @@ def create_source_chunks(sources):
 def create_search_index():
     """Create a search index by getting all the docs from the devcontainers repo."""
 
-    sources = get_github_docs("devcontainers", "devcontainers.github.io")
+    sources = get_github_docs("github", "ops", "docs/playbooks/codespaces/")
 
     source_chunks = create_source_chunks(sources)
 
@@ -62,8 +63,9 @@ def create_search_index():
     search_index = FAISS.from_documents([first_chunk], OpenAIEmbeddings())
 
     i = 0
+    print(f"Total chunks: {len(source_chunks)}")
     while i < len(source_chunks):
-        print("Getting embeddings for chunk {i} to {i+20}")
+        print(f"Getting embeddings for chunk {i} to {i + 20}")
         documents = source_chunks[i:i+20]
         search_index.add_texts(
             [d.page_content for d in documents],
